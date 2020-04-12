@@ -22,6 +22,16 @@ public class Converter {
         return String.format("%16s", Integer.toBinaryString(number & 0xFFFF)).replace(' ', '0');
     }
 
+    //convert some number int to binary String by 16 bit
+    public static String to16BytesString(int number){
+        return String.format("%16s", Integer.toBinaryString(number & 0xFFFF)).replace(' ', '0');
+    }
+
+    //convert some number int to binary String by 16 bit
+    public static String to32BytesString(int number){
+        return String.format("%32s", Integer.toBinaryString(number)).replace(' ', '0');
+    }
+
     public static byte[] toByteArray(List<Byte> list){
         Byte[] bytes = new Byte[list.size()];
 
