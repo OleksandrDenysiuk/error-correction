@@ -17,11 +17,41 @@ public class Main {
         String wordInBinary = Converter.to8BytesString(word);
 
         //SET variables Message
-
         //count CRC
-        Crc16 crc16 = new Crc16();
+        Crc crc;
+        String crcInBinaryString;
 
-        String crcInBinaryString = Converter.to16BytesString(crc16.compute_CRC16(word.getBytes()));
+        System.out.println("Please choose crc. ");
+        System.out.println("For crc 16 press - 1");
+        System.out.println("For crc 32 press - 2");
+        int crcType = Integer.valueOf(in.nextLine());
+
+        switch (crcType){
+            case 1: {
+                System.out.println("You choose crc 16");
+                crc = new Crc16();
+                crcInBinaryString = Converter.to16BytesString(crc.compute(word.getBytes()));
+                break;
+            }
+
+            case 2: {
+                System.out.println("You choose crc 32");
+                crc = new Crc32();
+                crcInBinaryString = Converter.to32BytesString(crc.compute(word.getBytes()));
+                break;
+            }
+
+            default: {
+                System.out.println("Default crc 32");
+                crc = new Crc32();
+                crcInBinaryString = Converter.to16BytesString(crc.compute(word.getBytes()));
+                break;
+            }
+        }
+
+
+        System.out.println(crcInBinaryString);
+        System.out.println(crc.compute(word.getBytes()));
 
         newMessage.setContent(wordInBinary);
 
@@ -63,7 +93,7 @@ public class Main {
         }
 
         System.out.println("CRC check...");
-        int resultCrc = crc16.verification(Converter.toByteArray(newMessage.getContentCrc()));
+        int resultCrc = crc.verification(Converter.toByteArray(newMessage.getContentCrc()));
 
         if(resultCrc == 0){
             System.out.println("Everything okay!");
