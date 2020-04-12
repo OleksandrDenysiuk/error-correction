@@ -1,14 +1,15 @@
-public class Crc16 {
+public class Crc16 extends Crc{
 
-    private short[] crcTable16;
+    private int[] crcTable16;
 
     public Crc16() {
-        this.crcTable16 = calculateTable_CRC16();
+        this.crcTable16 = calculateCrcTable();
     }
 
-    private short[] calculateTable_CRC16() {
+
+    protected int[] calculateCrcTable() {
         short generator = 0x1021;
-        short[] crcTable16 = new short[256];
+        int[] crcTable16 = new int[256];
 
         for (short divident = 0; divident < 256; divident++) /* iterate over all possible input byte values 0 - 255 */
         {
@@ -32,7 +33,7 @@ public class Crc16 {
         return crcTable16;
     }
 
-    public short compute_CRC16(byte[] bytes) {
+    public int compute(byte[] bytes) {
         short crc = 0;
         for (byte b : bytes)
         {
@@ -44,7 +45,7 @@ public class Crc16 {
         return crc;
     }
 
-    public short verification(byte[] bytes){
-        return compute_CRC16(bytes);
+    public int verification(byte[] bytes){
+        return compute(bytes);
     }
 }
