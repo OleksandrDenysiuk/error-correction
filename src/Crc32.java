@@ -1,17 +1,16 @@
-public class Crc32Service {
+public class Crc32 extends Crc{
 
-    private static int[] crcTable32;
+    private int[] crcTable32;
 
-
-    public static int getCRC(byte[] bytes){
-        CalculateCrcTable_CRC32();
-        return Compute_CRC32(bytes);
+    public Crc32() {
+        this.crcTable32 = calculateCrcTable();
     }
 
-    public static void CalculateCrcTable_CRC32()
+    @Override
+    protected int[] calculateCrcTable()
     {
         int polynomial = 0x814141AB;
-        crcTable32 = new int[256];
+        int[] crcTable32 = new int[256];
 
         for (int divident = 0; divident < 256; divident++) /* iterate over all possible input byte values 0 - 255 */
         {
@@ -31,9 +30,12 @@ public class Crc32Service {
 
             crcTable32[divident] = curByte;
         }
+
+        return crcTable32;
     }
 
-    public static int Compute_CRC32(byte[] bytes)
+    @Override
+    public int compute(byte[] bytes)
     {
         int crc = 0;
         for(byte b : bytes)
@@ -41,9 +43,14 @@ public class Crc32Service {
             /* XOR-in next input byte into MSB of crc and get this MSB, that's our new intermediate divident */
             byte pos = (byte)((crc ^ (b << 24)) >> 24);
             /* Shift out the MSB used for division per lookuptable and XOR with the remainder */
-            crc = (int)((crc << 8) ^ (int)(crcTable32[pos & 0xff]));
+            crc = ((crc << 8) ^ (crcTable32[pos & 0xff]));
         }
 
         return crc;
     }
+
+    public int verification(byte[] bytes){
+        return compute(bytes);
+    }
+
 }
