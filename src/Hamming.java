@@ -1,13 +1,16 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Hamming {
 
-    //рахує кількість контрольних бітів
-    //приймає стрічку даних в бітовому вигляді
-    //вертає ціле число, кількістю контрольних бітів
-    private static int countAmountControlBits(String bytes) {
+    //count amount of control bits
+    //arguments: amount of message bits
+    //return: amount of control bits
+    private static int countAmountControlBits(int length) {
 
         int amount = 0;
 
-        while (Math.pow(2, amount) <= bytes.length()) {
+        while (Math.pow(2, amount) <= length) {
             amount++;
         }
 
@@ -15,12 +18,12 @@ public class Hamming {
     }
 
 
-    //рахує код хемінга
-    //приймає: таблицю бітів з позиціями контрольних бітів як 0, кількість контрольних бітів
-    //повертає: таблицю з вирахуваними контрольними бітами
+    //calculate hamming code
+    //arguments: Bits String with positions of control bits
+    //return: array of control bits
     public static int[] calculation(String bytes) {
         int[] ar =  setPositionControlPoints(bytes);
-        int r = countAmountControlBits(bytes);
+        int r = countAmountControlBits(bytes.length());
 
         int[] bits = new int[r];
 
@@ -46,12 +49,12 @@ public class Hamming {
         return bits;
     }
 
-    //розширяє стрічку бітових даних позиціями контрольних бітів
-    //приймає: Bytes in String
-    //повертає: таблицю бітів з озставленими позиціями контрольних бітів нулями 0
+    //set positions of control bits
+    //arguments: bytes string
+    //returns: bytes string with positions as 0
     private static int[] setPositionControlPoints(String bytes) {
 
-        int amount =  countAmountControlBits(bytes);
+        int amount =  countAmountControlBits(bytes.length());
 
         int[] hamming = new int[bytes.length() + amount];
 
@@ -71,24 +74,53 @@ public class Hamming {
         return hamming;
     }
 
-    public static int verification(int[] array1, int[] array2){
+    public static int verification(List<Byte> message){
+
+        int pos = 1;
+
+        int result = 0;
+
+        for (int i = 0; i < message.size();){
+            result += message.get(i);
+            i = (int)Math.pow(2, pos) - 1;
+            pos++;
+        }
+
+        if(result % 2 == 0){
+            return 0;
+        }else {
+            return 1;
+        }
+    }
+
+    public static int calculatePositionBrokenBit(List<Byte> message){
+
+        List<Byte> oldHamming = new ArrayList<>();
+
+        String messageWithoutHamming = "";
+
+        for (int i = 0, pos = 0; i < message.size(); i++){
+            if(pos > message.size()){
+                break;
+            }
+            if((int)Math.pow(2, pos) - 1 == i){
+                oldHamming.add(message.get(i));
+                pos++;
+            }else{
+                messageWithoutHamming += message.get(i);
+            }
+        }
+
+        int[] newHamming = calculation(messageWithoutHamming);
 
         int pos = 0;
 
-        if(array1.length != array2.length){
-            return -1;
-        }
-
-        for (int i = 0; i < array1.length; i++){
-            if(array1[i] != array2[i]){
+        for (int i = 0; i < newHamming.length; i++){
+            if(oldHamming.get(i) != newHamming[i]){
                 pos += Math.pow(2, i);
             }
         }
 
-        if(pos != 0){
-            return pos;
-        }
-
-        return 0;
+        return pos;
     }
 }
