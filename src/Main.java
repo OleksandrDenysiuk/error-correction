@@ -74,22 +74,20 @@ public class Main {
 
         System.out.println("Hamming check...");
 
-        int[] oldControlBits = newMessage.getControlBits();
-        newMessage.setControlBits(Hamming.calculation(Converter.toString(newMessage.getContentCrc())));
-
-        int result = Hamming.verification(oldControlBits, newMessage.getControlBits());
+        int result = Hamming.verification(newMessage.getMessage());
 
         if(result == 0){
             System.out.println("Everything`s okay!");
-        }else if(result > 1){
-            System.out.println("Something is wrong on position: " + result);
-            newMessage.showColorContentCrcHammingBrakeBit(result);
+        }else if(result == 1){
+            int position = Hamming.calculatePositionBrokenBit(newMessage.getMessage());
+            System.out.println("Something is wrong on position: " + position);
+            newMessage.showColorContentCrcHammingBrakeBit(position);
             System.out.println("Repairing it... ");
-            newMessage.repair(result);
+            newMessage.repair(position);
             System.out.println("Result after repairing");
-            newMessage.showColorContentCrcHammingBrakeBit(result);
+            newMessage.showColorContentCrcHammingBrakeBit(position);
         }else{
-            System.out.println("Something is wrong with arrays");
+            System.out.println("Fatal error");
         }
 
         System.out.println("CRC check...");
