@@ -10,8 +10,8 @@ public class Main {
         Message newMessage = new Message();
 
         //user enter word
-        Scanner in = new Scanner(System.in);
-        String word = in.nextLine();
+        Scanner scan = new Scanner(System.in);
+        String word = scan.nextLine();
 
         //change string word to binary String
         String wordInBinary = Converter.to8BytesString(word);
@@ -24,7 +24,7 @@ public class Main {
         System.out.println("Please choose crc. ");
         System.out.println("For crc 16 press - 1");
         System.out.println("For crc 32 press - 2");
-        int crcType = Integer.valueOf(in.nextLine());
+        int crcType = Integer.valueOf(scan.nextLine());
 
         switch (crcType){
             case 1: {
@@ -49,10 +49,6 @@ public class Main {
             }
         }
 
-
-        System.out.println(crcInBinaryString);
-        System.out.println(crc.compute(word.getBytes()));
-
         newMessage.setContent(wordInBinary);
 
         newMessage.setCrc(crcInBinaryString);
@@ -65,12 +61,17 @@ public class Main {
         newMessage.generateMessage();
         newMessage.showColorContentCrcHamming();
 
-        //brake bit
-        System.out.println("Enter position(count from 1) of bit you want to brake:");
-        int brakeBitPosition = Integer.valueOf(in.nextLine());
+        //brake bits
+        System.out.println("Enter number of bits you want to brake");
+        int number = scan.nextInt();
 
-        newMessage.brakeBit(brakeBitPosition);
-        newMessage.showColorContentCrcHammingBrakeBit(brakeBitPosition);
+        for(int i = 0; i < number; i++){
+            System.out.println("Enter position(count from 1) of bit you want to brake:");
+            int brakeBitPosition = scan.nextInt();
+
+            newMessage.brakeBit(brakeBitPosition);
+            newMessage.showColorContentCrcHammingBrakeBit(brakeBitPosition);
+        }
 
         System.out.println("Hamming check...");
 
@@ -99,5 +100,4 @@ public class Main {
             System.out.println("Something wrong!" + Integer.toBinaryString(result));
         }
     }
-
 }
